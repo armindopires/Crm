@@ -1,0 +1,29 @@
+{
+  "manifest_version": 1,
+  "generated_at": "2026-11-26T15:15:55.710244Z",
+  "root": "reference/legacy-sources",
+  "expected_sources": [
+    {
+      "name": "Nova_Geracao_Manuais_Wolf_Enterprise.txt",
+      "status": "NAO_INDICADO",
+      "logical_path": null,
+      "impact": "Fonte ausente: factos dependentes ficam NAO_INDICADO até ser fornecida."
+    },
+    {
+      "name": "WE_Pacote_Equipa_2026-06-18.zip",
+      "status": "NAO_INDICADO",
+      "logical_path": null,
+      "impact": "Fonte ausente: factos dependentes ficam NAO_INDICADO até ser fornecida."
+    }
+  ],
+  "entries": [],
+  "summary": {
+    "files": 0,
+    "expected_found": 0,
+    "expected_missing": [
+      "Nova_Geracao_Manuais_Wolf_Enterprise.txt",
+      "WE_Pacote_Equipa_2026-06-18.zip"
+    ],
+    "requires_authorization": 0
+  }
+}

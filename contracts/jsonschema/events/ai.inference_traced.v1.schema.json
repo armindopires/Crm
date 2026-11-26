@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/ai.inference_traced.v1.schema.json",
+  "title": "ai.inference_traced v1",
+  "description": "Inferência de IA registada (AI_TRACE).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "provider": {
+      "type": "string"
+    },
+    "model": {
+      "type": "string"
+    },
+    "capability": {
+      "type": "string"
+    },
+    "input_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "output_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "side_effects": {
+      "enum": [
+        "blocked",
+        "none"
+      ]
+    }
+  },
+  "required": [
+    "provider",
+    "model",
+    "capability",
+    "input_hash",
+    "output_hash",
+    "side_effects"
+  ]
+}

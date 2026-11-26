@@ -1,0 +1,20 @@
+receivers:
+  otlp:
+    protocols:
+      http: { endpoint: 0.0.0.0:4318 }
+      grpc: { endpoint: 0.0.0.0:4317 }
+processors:
+  batch: {}
+  # defesa em profundidade: remove atributos potencialmente sensíveis antes de exportar
+  attributes/redact:
+    actions:
+      - { key: http.request.header.authorization, action: delete }
+      - { key: enduser.id, action: hash }
+exporters:
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls: { insecure: true }   # apenas rede local de desenvolvimento
+  debug: { verbosity: basic }
+service:
+  pipelines:
+    traces: { receivers: [otlp], processors: [attributes/redact, batch], exporters: [otlp/tempo] }

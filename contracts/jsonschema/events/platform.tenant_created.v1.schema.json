@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/platform.tenant_created.v1.schema.json",
+  "title": "platform.tenant_created v1",
+  "description": "Tenant criado (dados de identificação ficam na tabela; aqui só o facto).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "slug": {
+      "type": "string"
+    },
+    "is_synthetic": {
+      "type": "boolean"
+    },
+    "initial_organization_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "initial_admin_actor_id": {
+      "type": "string",
+      "format": "uuid"
+    }
+  },
+  "required": [
+    "slug",
+    "is_synthetic",
+    "initial_organization_id",
+    "initial_admin_actor_id"
+  ]
+}

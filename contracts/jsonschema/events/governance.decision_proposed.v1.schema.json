@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/governance.decision_proposed.v1.schema.json",
+  "title": "governance.decision_proposed v1",
+  "description": "DECISION proposta.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "decision_type": {
+      "type": "string"
+    },
+    "impact_category": {
+      "type": "string"
+    },
+    "proposed_by_type": {
+      "enum": [
+        "human",
+        "service",
+        "ai_agent"
+      ]
+    },
+    "ai_trace_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uuid"
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      }
+    }
+  },
+  "required": [
+    "decision_type",
+    "impact_category",
+    "proposed_by_type",
+    "ai_trace_id",
+    "evidence_ids"
+  ]
+}

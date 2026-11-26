@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/governance.decision_executed.v1.schema.json",
+  "title": "governance.decision_executed v1",
+  "description": "DECISION executada após aprovação.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "execution_mode": {
+      "enum": [
+        "recorded_only"
+      ]
+    }
+  },
+  "required": [
+    "execution_mode"
+  ]
+}

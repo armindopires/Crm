@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/knowledge.deposit_imported.v1.schema.json",
+  "title": "knowledge.deposit_imported v1",
+  "description": "Depósito JSON validado e importado.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "source_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "schema_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nodes_created": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "fields_excluded": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "source_id",
+    "schema_sha256",
+    "nodes_created",
+    "fields_excluded"
+  ]
+}

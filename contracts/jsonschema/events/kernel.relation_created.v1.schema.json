@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/kernel.relation_created.v1.schema.json",
+  "title": "kernel.relation_created v1",
+  "description": "RELATION criada entre entidades.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "relation_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "source_entity_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "target_entity_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "relation_type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,62}$"
+    }
+  },
+  "required": [
+    "relation_id",
+    "source_entity_id",
+    "target_entity_id",
+    "relation_type"
+  ]
+}

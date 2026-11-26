@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/platform.organization_created.v1.schema.json",
+  "title": "platform.organization_created v1",
+  "description": "Organização criada.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "country_code": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$"
+    }
+  },
+  "required": [
+    "organization_id",
+    "country_code"
+  ]
+}

@@ -1,0 +1,11 @@
+global: { scrape_interval: 15s }
+scrape_configs:
+  - job_name: we-api
+    metrics_path: /metrics
+    static_configs: [{ targets: ["api:8000"] }]
+  - job_name: we-worker
+    metrics_path: /metrics
+    static_configs: [{ targets: ["worker:9101"] }]
+rule_files: []
+# Alertas recomendados (a materializar em rules): we_outbox_dlq > 0; we_outbox_lag_seconds > 60;
+# increase(we_integrity_failures_total[5m]) > 0; we_decisions_pending > N (SLA de aprovação).

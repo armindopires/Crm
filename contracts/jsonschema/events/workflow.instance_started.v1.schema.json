@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/workflow.instance_started.v1.schema.json",
+  "title": "workflow.instance_started v1",
+  "description": "Instância de processo iniciada (versão fixada).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "definition_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "definition_version": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "definition_id",
+    "definition_version"
+  ]
+}

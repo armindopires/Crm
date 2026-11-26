@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/kernel.context_frame_created.v1.schema.json",
+  "title": "kernel.context_frame_created v1",
+  "description": "Nova versão (imutável) de um CONTEXT_FRAME.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "frame_key": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "purpose": {
+      "type": "string"
+    },
+    "jurisdiction": {
+      "type": "string"
+    },
+    "snapshot_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "supersedes_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uuid"
+    }
+  },
+  "required": [
+    "frame_key",
+    "version",
+    "purpose",
+    "jurisdiction",
+    "snapshot_hash",
+    "supersedes_id"
+  ]
+}

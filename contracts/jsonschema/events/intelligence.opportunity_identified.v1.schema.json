@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/intelligence.opportunity_identified.v1.schema.json",
+  "title": "intelligence.opportunity_identified v1",
+  "description": "SIGNAL promovido a OPPORTUNITY.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "opportunity_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "signal_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "value_estimate": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^-?\\d{1,16}(\\.\\d{1,2})?$"
+    },
+    "currency": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Z]{3}$"
+    }
+  },
+  "required": [
+    "opportunity_id",
+    "signal_id",
+    "value_estimate",
+    "currency"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/knowledge.source_registered.v1.schema.json",
+  "title": "knowledge.source_registered v1",
+  "description": "Fonte de conhecimento registada com hash.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "type": "string"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "authority_rank": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8
+    },
+    "evidence_status": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "kind",
+    "sha256",
+    "authority_rank",
+    "evidence_status"
+  ]
+}

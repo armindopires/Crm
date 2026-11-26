@@ -1,0 +1,16 @@
+{
+  "origem": "SINTETICO — fixture de demonstração, sem dados reais",
+  "gerado_em": "2026-11-26",
+  "tabelas": [
+    {"id": "T001", "nome": "CLIENTES_FICTICIOS", "descricao": "Entidades clientes (exemplo)", "chave_primaria": "ID",
+     "fk_declaradas": 0, "colunas": [{"nome": "ID", "tipo": "INTEGER", "nulo": false},
+                                     {"nome": "DESIGNACAO", "tipo": "VARCHAR(120)", "nulo": false}]},
+    {"id": "T002", "nome": "OBRIGACOES_FICTICIAS", "descricao": "Obrigações por cliente (exemplo)", "chave_primaria": "ID",
+     "fk_declaradas": 0, "colunas": [{"nome": "ID", "tipo": "INTEGER", "nulo": false},
+                                     {"nome": "CLIENTE_ID", "tipo": "INTEGER", "nulo": true}],
+     "senha_ligacao": "VALOR-FICTICIO-QUE-NUNCA-DEVE-SER-IMPORTADO"},
+    {"id": "T003", "nome": "UTILIZADORES_FICTICIOS", "descricao": "Contas de utilizador da origem (exemplo)",
+     "chave_primaria": null, "fk_declaradas": 0, "colunas": [{"nome": "LOGIN", "tipo": "VARCHAR(30)", "nulo": false}],
+     "email": "nao-importar@example.invalid"}
+  ]
+}

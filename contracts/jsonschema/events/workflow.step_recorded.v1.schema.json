@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/workflow.step_recorded.v1.schema.json",
+  "title": "workflow.step_recorded v1",
+  "description": "Passo de processo registado.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "level": {
+      "type": "string"
+    },
+    "step_key": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "level",
+    "step_key",
+    "status"
+  ]
+}

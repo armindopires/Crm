@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/evidence.evidence_linked.v1.schema.json",
+  "title": "evidence.evidence_linked v1",
+  "description": "EVIDENCE ligada a um alvo.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "target_type": {
+      "type": "string"
+    },
+    "target_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "link_type": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "target_type",
+    "target_id",
+    "link_type"
+  ]
+}

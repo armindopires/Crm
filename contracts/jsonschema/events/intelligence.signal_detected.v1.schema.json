@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/intelligence.signal_detected.v1.schema.json",
+  "title": "intelligence.signal_detected v1",
+  "description": "SIGNAL detetado.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "signal_type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,62}$"
+    },
+    "source": {
+      "type": "string"
+    },
+    "strength": {
+      "type": "string",
+      "pattern": "^(0(\\.\\d{1,4})?|1(\\.0{1,4})?)$"
+    },
+    "entity_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uuid"
+    }
+  },
+  "required": [
+    "signal_type",
+    "source",
+    "strength",
+    "entity_id"
+  ]
+}

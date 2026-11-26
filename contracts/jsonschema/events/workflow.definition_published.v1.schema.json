@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/workflow.definition_published.v1.schema.json",
+  "title": "workflow.definition_published v1",
+  "description": "Definição de processo publicada.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "key": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer"
+    },
+    "spec_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": [
+    "key",
+    "version",
+    "spec_hash"
+  ]
+}

@@ -1,0 +1,131 @@
+name: ci
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static:
+    name: Lint, typecheck, unit e contratos
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.7.8"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install -g pnpm@10.11.0
+      - run: uv sync --frozen
+      - run: pnpm install --frozen-lockfile
+      - name: Formatação e lint (ruff)
+        run: |
+          uv run --frozen ruff format --check src tests scripts
+          uv run --frozen ruff check src tests scripts
+      - name: Typecheck (mypy strict + tsc)
+        run: |
+          uv run --frozen mypy
+          pnpm -r typecheck
+      - name: Testes unitários
+        run: uv run --frozen pytest tests/unit -q
+      - name: Contratos (OpenAPI/AsyncAPI/JSON Schema atualizados e válidos)
+        run: |
+          uv run --frozen pytest tests/contract -q
+          node scripts/validate-asyncapi.mjs
+      - name: SDK gerado coincide com o contrato
+        run: |
+          pnpm --filter @we/sdk generate
+          git diff --exit-code packages/sdk-typescript/src/schema.d.ts
+      - name: Build frontend
+        run: pnpm --filter @we/web build
+
+  integration:
+    name: Integração (PostgreSQL/NATS/S3/Redis) + demo vertical
+    runs-on: ubuntu-24.04
+    needs: static
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.7.8"
+      - name: Bootstrap (segredos efémeros do CI, gerados no runner)
+        run: |
+          uv sync --frozen
+          python scripts/dev.py bootstrap
+      - name: Perfil core (build de imagens + migrações + API + worker)
+        run: python scripts/dev.py start core
+      - name: Validação de migrações (re-execução idempotente e estado)
+        run: |
+          uv run --frozen we migrate
+          uv run --frozen we migration-status
+      - name: Testes de integração (isolamento multi-tenant, append-only, adulteração, outbox/DLQ, replay)
+        run: uv run --frozen pytest tests/integration -q -m integration
+      - name: Demonstração vertical E2E
+        run: uv run --frozen python scripts/demo_vertical.py --report reports/demo-vertical.json
+      - name: Seed sintético e verificação de cadeias
+        run: uv run --frozen we seed-demo
+      - name: Diagnóstico em falha
+        if: failure()
+        run: docker compose -f infra/compose/compose.yaml --env-file .env --profile core logs --tail 200
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: demo-report
+          path: reports/
+
+  security:
+    name: Segredos, vulnerabilidades e SBOM
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret scan (gitleaks, histórico completo)
+        run: |
+          docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.24.2 git /repo --no-banner --redact -c /repo/.gitleaks.toml
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.7.8"
+      - name: Vulnerabilidades Python (pip-audit)
+        run: |
+          uv sync --frozen
+          uv export --frozen --no-emit-project --format requirements-txt > /tmp/req.txt
+          uv run --frozen pip-audit -r /tmp/req.txt --disable-pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Vulnerabilidades JS (pnpm audit)
+        run: |
+          npm install -g pnpm@10.11.0
+          pnpm install --frozen-lockfile
+          pnpm audit
+      - name: Build de imagens OCI
+        run: |
+          docker build -f infra/containers/python.Dockerfile -t we/core:ci .
+          docker build -f infra/containers/web.Dockerfile -t we/web:ci .
+      - name: Scan de imagens (trivy)
+        run: |
+          for img in we/core:ci we/web:ci; do
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.61.0 \
+              image --exit-code 1 --severity CRITICAL --ignore-unfixed "$img"
+          done
+      - name: SBOM (CycloneDX via syft)
+        run: |
+          mkdir -p sbom
+          for img in core web; do
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD/sbom:/out" anchore/syft:v1.22.0 \
+              we/$img:ci -o cyclonedx-json=/out/we-$img.cdx.json
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom/

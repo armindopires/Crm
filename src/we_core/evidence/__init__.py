@@ -1,0 +1,1 @@
+"""WE bounded context."""

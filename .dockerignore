@@ -1,0 +1,14 @@
+.git
+.venv
+node_modules
+**/node_modules
+**/.next
+.env
+.env.*
+.local
+reference/legacy-sources
+reference/extracted
+reports
+.mypy_cache
+.ruff_cache
+.pytest_cache

@@ -1,0 +1,1631 @@
+{
+  "asyncapi": "3.0.0",
+  "info": {
+    "title": "Wolf Enterprise — Eventos de domínio",
+    "version": "1.0.0",
+    "description": "Catálogo de eventos da WE. Fonte de verdade: PostgreSQL (Event Store). Transporte: NATS JetStream (stream WE_EVENTS, subjects we.<tenant>.<event_type>). Entrega at-least-once; consumidores idempotentes por event_id."
+  },
+  "defaultContentType": "application/json",
+  "servers": {
+    "dev": {
+      "host": "localhost:4222",
+      "protocol": "nats",
+      "description": "NATS local (perfil core)"
+    }
+  },
+  "channels": {
+    "ai_inference_traced": {
+      "address": "we.{tenant_id}.ai.inference_traced",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "ai_inference_traced_v1": {
+          "$ref": "#/components/messages/ai_inference_traced_v1"
+        }
+      }
+    },
+    "evidence_evidence_linked": {
+      "address": "we.{tenant_id}.evidence.evidence_linked",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "evidence_evidence_linked_v1": {
+          "$ref": "#/components/messages/evidence_evidence_linked_v1"
+        }
+      }
+    },
+    "evidence_evidence_registered": {
+      "address": "we.{tenant_id}.evidence.evidence_registered",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "evidence_evidence_registered_v1": {
+          "$ref": "#/components/messages/evidence_evidence_registered_v1"
+        }
+      }
+    },
+    "evidence_integrity_verified": {
+      "address": "we.{tenant_id}.evidence.integrity_verified",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "evidence_integrity_verified_v1": {
+          "$ref": "#/components/messages/evidence_integrity_verified_v1"
+        }
+      }
+    },
+    "governance_decision_approved": {
+      "address": "we.{tenant_id}.governance.decision_approved",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "governance_decision_approved_v1": {
+          "$ref": "#/components/messages/governance_decision_approved_v1"
+        }
+      }
+    },
+    "governance_decision_executed": {
+      "address": "we.{tenant_id}.governance.decision_executed",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "governance_decision_executed_v1": {
+          "$ref": "#/components/messages/governance_decision_executed_v1"
+        }
+      }
+    },
+    "governance_decision_proposed": {
+      "address": "we.{tenant_id}.governance.decision_proposed",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "governance_decision_proposed_v1": {
+          "$ref": "#/components/messages/governance_decision_proposed_v1"
+        }
+      }
+    },
+    "governance_decision_rejected": {
+      "address": "we.{tenant_id}.governance.decision_rejected",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "governance_decision_rejected_v1": {
+          "$ref": "#/components/messages/governance_decision_rejected_v1"
+        }
+      }
+    },
+    "iam_actor_created": {
+      "address": "we.{tenant_id}.iam.actor_created",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "iam_actor_created_v1": {
+          "$ref": "#/components/messages/iam_actor_created_v1"
+        }
+      }
+    },
+    "iam_membership_granted": {
+      "address": "we.{tenant_id}.iam.membership_granted",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "iam_membership_granted_v1": {
+          "$ref": "#/components/messages/iam_membership_granted_v1"
+        }
+      }
+    },
+    "iam_policy_created": {
+      "address": "we.{tenant_id}.iam.policy_created",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "iam_policy_created_v1": {
+          "$ref": "#/components/messages/iam_policy_created_v1"
+        }
+      }
+    },
+    "intelligence_opportunity_identified": {
+      "address": "we.{tenant_id}.intelligence.opportunity_identified",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "intelligence_opportunity_identified_v1": {
+          "$ref": "#/components/messages/intelligence_opportunity_identified_v1"
+        }
+      }
+    },
+    "intelligence_signal_detected": {
+      "address": "we.{tenant_id}.intelligence.signal_detected",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "intelligence_signal_detected_v1": {
+          "$ref": "#/components/messages/intelligence_signal_detected_v1"
+        }
+      }
+    },
+    "kernel_context_frame_created": {
+      "address": "we.{tenant_id}.kernel.context_frame_created",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "kernel_context_frame_created_v1": {
+          "$ref": "#/components/messages/kernel_context_frame_created_v1"
+        }
+      }
+    },
+    "kernel_entity_created": {
+      "address": "we.{tenant_id}.kernel.entity_created",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "kernel_entity_created_v1": {
+          "$ref": "#/components/messages/kernel_entity_created_v1"
+        },
+        "kernel_entity_created_v2": {
+          "$ref": "#/components/messages/kernel_entity_created_v2"
+        }
+      }
+    },
+    "kernel_entity_role_assigned": {
+      "address": "we.{tenant_id}.kernel.entity_role_assigned",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "kernel_entity_role_assigned_v1": {
+          "$ref": "#/components/messages/kernel_entity_role_assigned_v1"
+        }
+      }
+    },
+    "kernel_entity_updated": {
+      "address": "we.{tenant_id}.kernel.entity_updated",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "kernel_entity_updated_v1": {
+          "$ref": "#/components/messages/kernel_entity_updated_v1"
+        }
+      }
+    },
+    "kernel_relation_created": {
+      "address": "we.{tenant_id}.kernel.relation_created",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "kernel_relation_created_v1": {
+          "$ref": "#/components/messages/kernel_relation_created_v1"
+        }
+      }
+    },
+    "knowledge_deposit_imported": {
+      "address": "we.{tenant_id}.knowledge.deposit_imported",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "knowledge_deposit_imported_v1": {
+          "$ref": "#/components/messages/knowledge_deposit_imported_v1"
+        }
+      }
+    },
+    "knowledge_source_registered": {
+      "address": "we.{tenant_id}.knowledge.source_registered",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "knowledge_source_registered_v1": {
+          "$ref": "#/components/messages/knowledge_source_registered_v1"
+        }
+      }
+    },
+    "legacy_import_batch_created": {
+      "address": "we.{tenant_id}.legacy.import_batch_created",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "legacy_import_batch_created_v1": {
+          "$ref": "#/components/messages/legacy_import_batch_created_v1"
+        }
+      }
+    },
+    "legacy_import_batch_status_changed": {
+      "address": "we.{tenant_id}.legacy.import_batch_status_changed",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "legacy_import_batch_status_changed_v1": {
+          "$ref": "#/components/messages/legacy_import_batch_status_changed_v1"
+        }
+      }
+    },
+    "platform_organization_created": {
+      "address": "we.{tenant_id}.platform.organization_created",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "platform_organization_created_v1": {
+          "$ref": "#/components/messages/platform_organization_created_v1"
+        }
+      }
+    },
+    "platform_outbox_requeued": {
+      "address": "we.{tenant_id}.platform.outbox_requeued",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "platform_outbox_requeued_v1": {
+          "$ref": "#/components/messages/platform_outbox_requeued_v1"
+        }
+      }
+    },
+    "platform_tenant_created": {
+      "address": "we.{tenant_id}.platform.tenant_created",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "platform_tenant_created_v1": {
+          "$ref": "#/components/messages/platform_tenant_created_v1"
+        }
+      }
+    },
+    "workflow_definition_published": {
+      "address": "we.{tenant_id}.workflow.definition_published",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "workflow_definition_published_v1": {
+          "$ref": "#/components/messages/workflow_definition_published_v1"
+        }
+      }
+    },
+    "workflow_instance_started": {
+      "address": "we.{tenant_id}.workflow.instance_started",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "workflow_instance_started_v1": {
+          "$ref": "#/components/messages/workflow_instance_started_v1"
+        }
+      }
+    },
+    "workflow_step_recorded": {
+      "address": "we.{tenant_id}.workflow.step_recorded",
+      "parameters": {
+        "tenant_id": {
+          "description": "UUID do tenant (ordenação garantida por agregado)"
+        }
+      },
+      "messages": {
+        "workflow_step_recorded_v1": {
+          "$ref": "#/components/messages/workflow_step_recorded_v1"
+        }
+      }
+    }
+  },
+  "operations": {
+    "publish_ai_inference_traced": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/ai_inference_traced"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_evidence_evidence_linked": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/evidence_evidence_linked"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_evidence_evidence_registered": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/evidence_evidence_registered"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_evidence_integrity_verified": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/evidence_integrity_verified"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_governance_decision_approved": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/governance_decision_approved"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_governance_decision_executed": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/governance_decision_executed"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_governance_decision_proposed": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/governance_decision_proposed"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_governance_decision_rejected": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/governance_decision_rejected"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_iam_actor_created": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/iam_actor_created"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_iam_membership_granted": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/iam_membership_granted"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_iam_policy_created": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/iam_policy_created"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_intelligence_opportunity_identified": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/intelligence_opportunity_identified"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_intelligence_signal_detected": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/intelligence_signal_detected"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_kernel_context_frame_created": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/kernel_context_frame_created"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_kernel_entity_created": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/kernel_entity_created"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_kernel_entity_role_assigned": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/kernel_entity_role_assigned"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_kernel_entity_updated": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/kernel_entity_updated"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_kernel_relation_created": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/kernel_relation_created"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_knowledge_deposit_imported": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/knowledge_deposit_imported"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_knowledge_source_registered": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/knowledge_source_registered"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_legacy_import_batch_created": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/legacy_import_batch_created"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_legacy_import_batch_status_changed": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/legacy_import_batch_status_changed"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_platform_organization_created": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/platform_organization_created"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_platform_outbox_requeued": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/platform_outbox_requeued"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_platform_tenant_created": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/platform_tenant_created"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_workflow_definition_published": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/workflow_definition_published"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_workflow_instance_started": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/workflow_instance_started"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    },
+    "publish_workflow_step_recorded": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/workflow_step_recorded"
+      },
+      "summary": "Publicado pelo worker a partir da transactional outbox (at-least-once)."
+    }
+  },
+  "components": {
+    "messages": {
+      "ai_inference_traced_v1": {
+        "name": "ai.inference_traced",
+        "title": "ai.inference_traced v1",
+        "summary": "Inferência de IA registada (AI_TRACE).",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "ai.inference_traced"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/ai.inference_traced.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "evidence_evidence_linked_v1": {
+        "name": "evidence.evidence_linked",
+        "title": "evidence.evidence_linked v1",
+        "summary": "EVIDENCE ligada a um alvo.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "evidence.evidence_linked"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/evidence.evidence_linked.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "evidence_evidence_registered_v1": {
+        "name": "evidence.evidence_registered",
+        "title": "evidence.evidence_registered v1",
+        "summary": "EVIDENCE guardada de forma imutável.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "evidence.evidence_registered"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/evidence.evidence_registered.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "evidence_integrity_verified_v1": {
+        "name": "evidence.integrity_verified",
+        "title": "evidence.integrity_verified v1",
+        "summary": "Verificação de integridade de EVIDENCE.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "evidence.integrity_verified"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/evidence.integrity_verified.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "governance_decision_approved_v1": {
+        "name": "governance.decision_approved",
+        "title": "governance.decision_approved v1",
+        "summary": "DECISION aprovada por humano.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "governance.decision_approved"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/governance.decision_approved.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "governance_decision_executed_v1": {
+        "name": "governance.decision_executed",
+        "title": "governance.decision_executed v1",
+        "summary": "DECISION executada após aprovação.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "governance.decision_executed"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/governance.decision_executed.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "governance_decision_proposed_v1": {
+        "name": "governance.decision_proposed",
+        "title": "governance.decision_proposed v1",
+        "summary": "DECISION proposta.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "governance.decision_proposed"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/governance.decision_proposed.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "governance_decision_rejected_v1": {
+        "name": "governance.decision_rejected",
+        "title": "governance.decision_rejected v1",
+        "summary": "DECISION rejeitada por humano.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "governance.decision_rejected"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/governance.decision_rejected.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "iam_actor_created_v1": {
+        "name": "iam.actor_created",
+        "title": "iam.actor_created v1",
+        "summary": "Ator registado.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "iam.actor_created"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/iam.actor_created.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "iam_membership_granted_v1": {
+        "name": "iam.membership_granted",
+        "title": "iam.membership_granted v1",
+        "summary": "Papéis RBAC atribuídos a um ator.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "iam.membership_granted"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/iam.membership_granted.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "iam_policy_created_v1": {
+        "name": "iam.policy_created",
+        "title": "iam.policy_created v1",
+        "summary": "Política ABAC publicada (versão imutável).",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "iam.policy_created"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/iam.policy_created.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "intelligence_opportunity_identified_v1": {
+        "name": "intelligence.opportunity_identified",
+        "title": "intelligence.opportunity_identified v1",
+        "summary": "SIGNAL promovido a OPPORTUNITY.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "intelligence.opportunity_identified"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/intelligence.opportunity_identified.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "intelligence_signal_detected_v1": {
+        "name": "intelligence.signal_detected",
+        "title": "intelligence.signal_detected v1",
+        "summary": "SIGNAL detetado.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "intelligence.signal_detected"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/intelligence.signal_detected.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "kernel_context_frame_created_v1": {
+        "name": "kernel.context_frame_created",
+        "title": "kernel.context_frame_created v1",
+        "summary": "Nova versão (imutável) de um CONTEXT_FRAME.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "kernel.context_frame_created"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/kernel.context_frame_created.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "kernel_entity_created_v1": {
+        "name": "kernel.entity_created",
+        "title": "kernel.entity_created v1",
+        "summary": "ENTITY criada.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "kernel.entity_created"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/kernel.entity_created.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "kernel_entity_created_v2": {
+        "name": "kernel.entity_created",
+        "title": "kernel.entity_created v2",
+        "summary": "ENTITY criada (v2: acrescenta source_ref opcional — evolução compatível).",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "kernel.entity_created"
+                },
+                "schema_version": {
+                  "const": 2
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/kernel.entity_created.v2.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "kernel_entity_role_assigned_v1": {
+        "name": "kernel.entity_role_assigned",
+        "title": "kernel.entity_role_assigned v1",
+        "summary": "ROLE atribuído a ENTITY.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "kernel.entity_role_assigned"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/kernel.entity_role_assigned.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "kernel_entity_updated_v1": {
+        "name": "kernel.entity_updated",
+        "title": "kernel.entity_updated v1",
+        "summary": "Alteração material a uma ENTITY: só nomes de campos e estados, nunca valores pessoais.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "kernel.entity_updated"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/kernel.entity_updated.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "kernel_relation_created_v1": {
+        "name": "kernel.relation_created",
+        "title": "kernel.relation_created v1",
+        "summary": "RELATION criada entre entidades.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "kernel.relation_created"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/kernel.relation_created.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "knowledge_deposit_imported_v1": {
+        "name": "knowledge.deposit_imported",
+        "title": "knowledge.deposit_imported v1",
+        "summary": "Depósito JSON validado e importado.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "knowledge.deposit_imported"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/knowledge.deposit_imported.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "knowledge_source_registered_v1": {
+        "name": "knowledge.source_registered",
+        "title": "knowledge.source_registered v1",
+        "summary": "Fonte de conhecimento registada com hash.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "knowledge.source_registered"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/knowledge.source_registered.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "legacy_import_batch_created_v1": {
+        "name": "legacy.import_batch_created",
+        "title": "legacy.import_batch_created v1",
+        "summary": "Lote de importação criado.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "legacy.import_batch_created"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/legacy.import_batch_created.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "legacy_import_batch_status_changed_v1": {
+        "name": "legacy.import_batch_status_changed",
+        "title": "legacy.import_batch_status_changed v1",
+        "summary": "Estado de lote alterado.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "legacy.import_batch_status_changed"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/legacy.import_batch_status_changed.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "platform_organization_created_v1": {
+        "name": "platform.organization_created",
+        "title": "platform.organization_created v1",
+        "summary": "Organização criada.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "platform.organization_created"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/platform.organization_created.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "platform_outbox_requeued_v1": {
+        "name": "platform.outbox_requeued",
+        "title": "platform.outbox_requeued v1",
+        "summary": "Mensagem da DLQ reposta para publicação.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "platform.outbox_requeued"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/platform.outbox_requeued.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "platform_tenant_created_v1": {
+        "name": "platform.tenant_created",
+        "title": "platform.tenant_created v1",
+        "summary": "Tenant criado (dados de identificação ficam na tabela; aqui só o facto).",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "platform.tenant_created"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/platform.tenant_created.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "workflow_definition_published_v1": {
+        "name": "workflow.definition_published",
+        "title": "workflow.definition_published v1",
+        "summary": "Definição de processo publicada.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "workflow.definition_published"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/workflow.definition_published.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "workflow_instance_started_v1": {
+        "name": "workflow.instance_started",
+        "title": "workflow.instance_started v1",
+        "summary": "Instância de processo iniciada (versão fixada).",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "workflow.instance_started"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/workflow.instance_started.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "workflow_step_recorded_v1": {
+        "name": "workflow.step_recorded",
+        "title": "workflow.step_recorded v1",
+        "summary": "Passo de processo registado.",
+        "contentType": "application/json",
+        "headers": {
+          "type": "object",
+          "properties": {
+            "Nats-Msg-Id": {
+              "type": "string",
+              "description": "event_id (deduplicação JetStream)"
+            }
+          }
+        },
+        "payload": {
+          "allOf": [
+            {
+              "$ref": "../jsonschema/event-envelope.v1.schema.json"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "event_type": {
+                  "const": "workflow.step_recorded"
+                },
+                "schema_version": {
+                  "const": 1
+                },
+                "payload": {
+                  "$ref": "../jsonschema/events/workflow.step_recorded.v1.schema.json"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

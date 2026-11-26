@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/iam.membership_granted.v1.schema.json",
+  "title": "iam.membership_granted v1",
+  "description": "Papéis RBAC atribuídos a um ator.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "actor_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "organization_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uuid"
+    },
+    "roles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "actor_id",
+    "organization_id",
+    "roles"
+  ]
+}

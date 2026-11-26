@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+# Node
+node_modules/
+.next/
+apps/web/out/
+# Local env / secrets
+.env
+.env.*
+!.env.example
+.local/
+*.pem
+*.key
+# Legacy source material: never committed (manifest in reference/manifests is)
+reference/legacy-sources/*
+!reference/legacy-sources/README.md
+reference/extracted/
+# Reports
+reports/
+backups/

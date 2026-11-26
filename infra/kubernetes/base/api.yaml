@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: we-api
+  labels: { app.kubernetes.io/name: we-api, app.kubernetes.io/part-of: wolf-enterprise }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app.kubernetes.io/name: we-api } }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: we-api, app.kubernetes.io/part-of: wolf-enterprise }
+    spec:
+      automountServiceAccountToken: false
+      securityContext: { runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, seccompProfile: { type: RuntimeDefault } }
+      containers:
+        - name: api
+          image: we/core:0.1.0   # substituir por registry/digest imutável no overlay
+          command: ["uvicorn", "we_core.api.app:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
+          ports: [{ containerPort: 8000 }]
+          envFrom:
+            - configMapRef: { name: we-config }
+            - secretRef: { name: we-secrets }   # injetado por External Secrets / Vault
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: [ALL] }
+          readinessProbe: { httpGet: { path: /health/ready, port: 8000 }, periodSeconds: 10 }
+          livenessProbe: { httpGet: { path: /health/live, port: 8000 }, periodSeconds: 20 }
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { memory: 512Mi }
+          volumeMounts: [{ name: tmp, mountPath: /tmp }]
+      volumes: [{ name: tmp, emptyDir: {} }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: we-api }
+spec:
+  selector: { app.kubernetes.io/name: we-api }
+  ports: [{ port: 80, targetPort: 8000 }]

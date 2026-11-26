@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/kernel.entity_role_assigned.v1.schema.json",
+  "title": "kernel.entity_role_assigned v1",
+  "description": "ROLE atribuído a ENTITY.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "role_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "role_type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,62}$"
+    },
+    "organization_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uuid"
+    },
+    "valid_from": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "role_id",
+    "role_type",
+    "organization_id",
+    "valid_from"
+  ]
+}

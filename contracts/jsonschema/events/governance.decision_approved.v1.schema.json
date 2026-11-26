@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/governance.decision_approved.v1.schema.json",
+  "title": "governance.decision_approved v1",
+  "description": "DECISION aprovada por humano.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "approval_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "from_status": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "approval_id",
+    "from_status"
+  ]
+}

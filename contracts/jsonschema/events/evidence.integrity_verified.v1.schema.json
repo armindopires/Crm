@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/evidence.integrity_verified.v1.schema.json",
+  "title": "evidence.integrity_verified v1",
+  "description": "Verificação de integridade de EVIDENCE.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sha256_expected": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sha256_observed": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "result": {
+      "enum": [
+        "ok",
+        "mismatch",
+        "missing"
+      ]
+    }
+  },
+  "required": [
+    "sha256_expected",
+    "sha256_observed",
+    "result"
+  ]
+}

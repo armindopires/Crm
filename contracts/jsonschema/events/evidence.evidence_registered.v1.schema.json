@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/evidence.evidence_registered.v1.schema.json",
+  "title": "evidence.evidence_registered v1",
+  "description": "EVIDENCE guardada de forma imutável.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "size_bytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "media_type": {
+      "type": "string"
+    },
+    "classification": {
+      "type": "string",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted",
+        "secret"
+      ]
+    },
+    "storage_key_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": [
+    "sha256",
+    "size_bytes",
+    "media_type",
+    "classification",
+    "storage_key_hash"
+  ]
+}

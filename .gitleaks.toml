@@ -1,0 +1,19 @@
+# Configuração gitleaks da WE: regras por omissão + exclusão de artefactos locais não versionados.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Artefactos locais ignorados pelo Git (gerados por bootstrap/dev) e dependências de terceiros"
+paths = [
+  '''(^|/)\.venv/''',
+  '''(^|/)node_modules/''',
+  '''(^|/)\.next/''',
+  '''(^|/)\.local/''',
+  '''(^|/)\.env$''',
+  '''(^|/)reports/''',
+  '''(^|/)\.mypy_cache/''',
+  '''(^|/)\.ruff_cache/''',
+  '''(^|/)\.pytest_cache/''',
+  '''(^|/)pnpm-lock\.yaml$''',
+  '''(^|/)uv\.lock$''',
+]

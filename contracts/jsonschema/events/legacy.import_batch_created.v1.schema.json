@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/legacy.import_batch_created.v1.schema.json",
+  "title": "legacy.import_batch_created v1",
+  "description": "Lote de importação criado.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "source_system_code": {
+      "type": "string"
+    },
+    "batch_kind": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_system_code",
+    "batch_kind"
+  ]
+}

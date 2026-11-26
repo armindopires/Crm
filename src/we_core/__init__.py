@@ -1,0 +1,1 @@
+"""Wolf Enterprise — núcleo fundacional."""

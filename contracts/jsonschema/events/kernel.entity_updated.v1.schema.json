@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/kernel.entity_updated.v1.schema.json",
+  "title": "kernel.entity_updated v1",
+  "description": "Alteração material a uma ENTITY: só nomes de campos e estados, nunca valores pessoais.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "changed_fields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 64
+      },
+      "maxItems": 100
+    },
+    "new_version": {
+      "type": "integer",
+      "minimum": 2
+    },
+    "status": {
+      "enum": [
+        "active",
+        "archived"
+      ]
+    },
+    "classification": {
+      "type": "string",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted",
+        "secret"
+      ]
+    }
+  },
+  "required": [
+    "changed_fields",
+    "new_version",
+    "status",
+    "classification"
+  ]
+}

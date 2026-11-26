@@ -1,0 +1,87 @@
+[project]
+name = "we-core"
+version = "0.1.0"
+description = "Wolf Enterprise (WE) — núcleo fundacional: Event Store, Evidence, Audit, Governance, Kernel cognitivo"
+requires-python = ">=3.12"
+readme = "README.md"
+license = { text = "Proprietary" }
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.32,<1",
+  "psycopg[binary,pool]>=3.2,<4",
+  "pydantic>=2.9,<3",
+  "pydantic-settings>=2.6,<3",
+  "nats-py>=2.9,<3",
+  "boto3>=1.35,<2",
+  "pyjwt[crypto]>=2.9,<3",
+  "jsonschema>=4.23,<5",
+  "python-multipart>=0.0.18",
+  "redis>=5.2,<7",
+  "prometheus-client>=0.21,<1",
+  "opentelemetry-api>=1.28,<2",
+  "opentelemetry-sdk>=1.28,<2",
+  "opentelemetry-exporter-otlp-proto-http>=1.28,<2",
+  "httpx>=0.27,<1",
+]
+
+[project.optional-dependencies]
+inventory = ["openpyxl>=3.1,<4", "python-docx>=1.1,<2"]
+
+[dependency-groups]
+dev = [
+  "pytest>=9.0.3,<10",
+  "pytest-timeout>=2.3",
+  "ruff>=0.8",
+  "mypy>=1.13",
+  "boto3-stubs[s3]>=1.35",
+  "types-jsonschema>=4.23",
+  "pip-audit>=2.7",
+  "openpyxl>=3.1,<4",
+  "python-docx>=1.1,<2",
+]
+
+[project.scripts]
+we = "we_core.cli:main"
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/we_core"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"db/migrations" = "we_core/_migrations"
+"contracts/jsonschema" = "we_core/_schemas"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "BLE", "C4", "SIM", "RUF"]
+ignore = ["S101", "S608", "RUF001", "RUF002", "RUF003", "B008", "E501"]  # E501: o formatter gere o comprimento
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S105", "S106", "S108", "S311"]
+"scripts/**" = ["S603", "S607"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+packages = ["we_core"]
+warn_unused_ignores = true
+disallow_untyped_decorators = false
+[[tool.mypy.overrides]]
+module = ["nats.*", "docx.*", "openpyxl.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = [
+  "integration: requer o perfil core (PostgreSQL, NATS, S3) a correr",
+]
+timeout = 120

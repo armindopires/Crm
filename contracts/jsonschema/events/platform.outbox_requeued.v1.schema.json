@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/platform.outbox_requeued.v1.schema.json",
+  "title": "platform.outbox_requeued v1",
+  "description": "Mensagem da DLQ reposta para publicação.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "format": "uuid"
+    }
+  },
+  "required": [
+    "event_id"
+  ]
+}

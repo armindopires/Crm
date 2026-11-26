@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/seeds/crmcontab-metadados-sintetico.schema.json",
+  "title": "Depósito sintético de metadados (forma inspirada em inventário de tabelas legadas)",
+  "description": "Fixture SINTÉTICA. Não reproduz o depósito real do pacote (ausente do repositório).",
+  "type": "object",
+  "required": ["origem", "tabelas"],
+  "properties": {
+    "origem": {"type": "string"},
+    "gerado_em": {"type": "string", "format": "date"},
+    "tabelas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "nome", "colunas"],
+        "properties": {
+          "id": {"type": "string"},
+          "nome": {"type": "string"},
+          "descricao": {"type": "string"},
+          "chave_primaria": {"type": ["string", "null"]},
+          "fk_declaradas": {"type": "integer", "minimum": 0},
+          "colunas": {"type": "array", "items": {"type": "object", "required": ["nome", "tipo"],
+            "properties": {"nome": {"type": "string"}, "tipo": {"type": "string"}, "nulo": {"type": "boolean"}}}}
+        }
+      }
+    }
+  }
+}

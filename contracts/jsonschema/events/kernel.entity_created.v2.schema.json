@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.we.local/events/kernel.entity_created.v2.schema.json",
+  "title": "kernel.entity_created v2",
+  "description": "ENTITY criada (v2: acrescenta source_ref opcional — evolução compatível).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "entity_type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,62}$"
+    },
+    "classification": {
+      "type": "string",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted",
+        "secret"
+      ]
+    },
+    "organization_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uuid"
+    },
+    "attribute_keys": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 64
+      },
+      "maxItems": 100
+    },
+    "source_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 200
+    }
+  },
+  "required": [
+    "entity_type",
+    "classification",
+    "organization_id",
+    "attribute_keys"
+  ]
+}
