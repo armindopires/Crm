@@ -9,7 +9,7 @@ from uuid import UUID
 from psycopg.types.json import Jsonb
 
 from we_core.audit import log as audit
-from we_core.common import uuid7
+from we_core.common import CLASSIFICATIONS, uuid7
 from we_core.context import OpContext
 from we_core.db import Conn, Database
 from we_core.errors import Conflict, Forbidden, ValidationFailed
@@ -110,6 +110,8 @@ def create_actor(conn: Conn, ctx: OpContext, *, idp_subject: str, actor_type: st
     unknown = set(roles) - set(ROLE_PERMISSIONS)
     if unknown:
         raise ValidationFailed(f"Papéis desconhecidos: {sorted(unknown)}")
+    if CLASSIFICATIONS.index(clearance) > ctx.principal.clearance_rank():
+        raise Forbidden("Não pode atribuir habilitação superior à sua.", code="WE-IAM-CLEARANCE")
     if actor_type == "ai_agent" and set(roles) - {"ai_agent"}:
         raise ValidationFailed("Agentes de IA só podem ter o papel ai_agent.", code="WE-IAM-AI-ROLE")
     if conn.execute("SELECT 1 FROM iam.actors WHERE idp_subject = %s", (idp_subject,)).fetchone():
@@ -165,6 +167,13 @@ def create_policy(conn: Conn, ctx: OpContext, *, name: str, effect: str, actions
     unknown = set(conditions) - SUPPORTED_POLICY_CONDITIONS
     if unknown:
         raise ValidationFailed(f"Condições não suportadas: {sorted(unknown)}", code="WE-POL-COND")
+    for k, v in conditions.items():
+        if not isinstance(v, list) or not v or not all(isinstance(x, str) and 0 < len(x) <= 200 for x in v):
+            raise ValidationFailed(
+                f"Condição {k} tem de ser uma lista não vazia de textos.", code="WE-POL-COND"
+            )
+    if not actions or not all(isinstance(a, str) and a for a in actions):
+        raise ValidationFailed("Ações da política inválidas.", code="WE-POL-ACT")
     cur = conn.execute(
         "SELECT coalesce(max(version),0) AS v FROM iam.policies WHERE name = %s", (name,)
     ).fetchone()

@@ -3,10 +3,10 @@
 Última sessão: 2026-11-26. Branch: `claude/wolf-enterprise-foundation-v2esle`.
 
 ## Estado num parágrafo
-A fundação da WE está implementada e verificada localmente: o perfil core arranca, as 9 migrações correm numa
-base vazia, há 51 testes (unitários, contrato e integração adversarial), a demonstração vertical passa 14/14
+A fundação da WE está implementada e verificada localmente: o perfil core arranca, as 10 migrações correm numa
+base vazia, há 56 testes (unitários, contrato e integração adversarial), a demonstração vertical passa 14/14
 contra a stack contentorizada, os scans estão limpos (0 segredos, 0 vulnerabilidades conhecidas nas
-dependências, 0 CRITICAL nas imagens) e o backup/restore foi provado com cadeias verificadas. **As duas fontes
+dependências, 0 CRITICAL nas imagens), o backup/restore foi provado com cadeias verificadas e os 13 achados da revisão independente foram tratados (ver STATUS). **As duas fontes
 do pacote WE continuam ausentes** e o IdP de produção não está decidido.
 
 ## Retomar em 5 minutos

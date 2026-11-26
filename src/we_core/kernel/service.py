@@ -85,12 +85,17 @@ def create_context_frame(
 
 
 def get_context_frame(conn: Conn, ctx: OpContext, frame_id: UUID) -> dict[str, Any]:
-    require(conn, ctx.principal, "context:read", Resource("context_frame", frame_id))
     row = conn.execute(
         "SELECT * FROM kernel.context_frames WHERE context_frame_id = %s", (frame_id,)
     ).fetchone()
     if not row:
         raise NotFound("Context frame não encontrado.")
+    require(
+        conn,
+        ctx.principal,
+        "context:read",
+        Resource("context_frame", frame_id, organization_id=row["organization_id"]),
+    )
     return dict(row)
 
 

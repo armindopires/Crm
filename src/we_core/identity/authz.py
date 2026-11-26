@@ -65,6 +65,23 @@ class AuthzDecision:
     policy_refs: list[str]
 
 
+CLEARANCE_SQL = "array_position(ARRAY['public','internal','confidential','restricted','secret'], classification) - 1 <= %s"
+
+
+def scope_sql(p: Principal, *, org_col: str | None = "organization_id",
+              classification: bool = False) -> tuple[str, list[object]]:  # fmt: skip
+    """Filtro SQL de âmbito organizacional e/ou habilitação para listagens (ABAC em consultas)."""
+    clauses: list[str] = ["true"]
+    params: list[object] = []
+    if org_col and p.org_scope is not None:
+        clauses.append(f"({org_col} IS NULL OR {org_col} = ANY(%s))")
+        params.append(list(p.org_scope))
+    if classification:
+        clauses.append(CLEARANCE_SQL)
+        params.append(p.clearance_rank())
+    return " AND ".join(clauses), params
+
+
 def permissions_of(p: Principal) -> set[str]:
     perms: set[str] = set()
     for r in p.roles:

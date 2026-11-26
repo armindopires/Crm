@@ -18,7 +18,7 @@ from we_core.errors import NotFound, ValidationFailed
 from we_core.events import projections
 from we_core.evidence import service as evidence
 from we_core.governance import service as governance
-from we_core.identity.authz import Resource, require
+from we_core.identity.authz import Resource, require, scope_sql
 from we_core.integrity import verify_audit, verify_events
 from we_core.intelligence import service as intelligence
 from we_core.legacy import service as legacy
@@ -41,12 +41,9 @@ def list_events(after_seq: int = Query(0, ge=0), limit: int = Query(50, ge=1, le
         if val is not None:
             clauses.append(f"{col} = %s")
             params.append(val)
-    rank = ctx.principal.clearance_rank()
-    clauses.append(
-        "array_position(ARRAY['public','internal','confidential','restricted','secret'], "
-        "classification) - 1 <= %s"
-    )
-    params.append(rank)
+    scope, scope_params = scope_sql(ctx.principal, classification=True)
+    clauses.append(scope)
+    params.extend(scope_params)
     rows = conn.execute(
         f"SELECT * FROM event_store.events WHERE {' AND '.join(clauses)} ORDER BY chain_seq LIMIT %s".encode(),
         (*params, limit),
@@ -117,7 +114,7 @@ def requeue_dead(ctx: OpContext = Depends(op_context), conn: Conn = Depends(tena
 # ── Evidence ──
 @router.post("/evidence", response_model=m.EvidenceOut, status_code=201, tags=["evidence"],
              summary="Carregar evidência (SHA-256 calculado no servidor)")  # fmt: skip
-async def upload_evidence(request: Request, file: UploadFile = File(...),
+def upload_evidence(request: Request, file: UploadFile = File(...),
                           classification: m.Classification = Form("confidential"),
                           source: str = Form("upload", max_length=120),
                           organization_id: UUID | None = Form(None),
@@ -125,7 +122,7 @@ async def upload_evidence(request: Request, file: UploadFile = File(...),
                           idem: str | None = Depends(idempotency_key)) -> Any:  # fmt: skip
     st = state(request)
     limit = st.settings.evidence_max_bytes
-    data = await file.read(limit + 1)
+    data = file.file.read(limit + 1)
     if len(data) > limit:
         raise ValidationFailed(f"Evidência excede o limite de {limit} bytes.", code="WE-EVD-SIZE")
     media_type = (file.content_type or "application/octet-stream").split(";")[0].strip().lower()
@@ -144,11 +141,9 @@ async def upload_evidence(request: Request, file: UploadFile = File(...),
 def list_evidence(limit: int = Query(50, ge=1, le=200), ctx: OpContext = Depends(op_context),
                   conn: Conn = Depends(tenant_conn)) -> Any:  # fmt: skip
     require(conn, ctx.principal, "evidence:read", Resource("evidence"))
-    rows = conn.execute(
-        "SELECT * FROM evidence.evidence WHERE array_position(ARRAY['public','internal','confidential',"
-        "'restricted','secret'], classification) - 1 <= %s ORDER BY uploaded_at DESC LIMIT %s",
-        (ctx.principal.clearance_rank(), limit)).fetchall()  # fmt: skip
-    return {"items": rows}
+    where, params = scope_sql(ctx.principal, classification=True)
+    sql = f"SELECT * FROM evidence.evidence WHERE {where} ORDER BY uploaded_at DESC LIMIT %s"
+    return {"items": conn.execute(sql.encode(), (*params, limit)).fetchall()}
 
 
 @router.get("/evidence/{evidence_id}", response_model=m.EvidenceOut, tags=["evidence"])
@@ -308,11 +303,9 @@ def source_systems(ctx: OpContext = Depends(op_context), conn: Conn = Depends(te
 @router.get("/sources", response_model=m.Page[m.SourceOut], tags=["knowledge"])
 def list_sources(ctx: OpContext = Depends(op_context), conn: Conn = Depends(tenant_conn)) -> Any:
     require(conn, ctx.principal, "source:read", Resource("source"))
-    return {
-        "items": conn.execute(
-            "SELECT * FROM knowledge.sources ORDER BY registered_at DESC LIMIT 200"
-        ).fetchall()
-    }
+    where, params = scope_sql(ctx.principal, org_col=None, classification=True)
+    sql = f"SELECT * FROM knowledge.sources WHERE {where} ORDER BY registered_at DESC LIMIT 200"
+    return {"items": conn.execute(sql.encode(), params).fetchall()}
 
 
 @router.post("/import-batches", response_model=m.ImportBatchOut, status_code=201, tags=["legacy"],
@@ -337,6 +330,8 @@ def get_batch(batch_id: UUID, ctx: OpContext = Depends(op_context), conn: Conn =
 def system_status(ctx: OpContext = Depends(op_context), conn: Conn = Depends(tenant_conn)) -> Any:
     from we_core.platform.service import get_tenant
 
+    require(conn, ctx.principal, "event:verify", Resource("event"))
+    require(conn, ctx.principal, "audit:verify", Resource("audit"))
     tenant = get_tenant(conn, ctx)
     counts = conn.execute(
         """SELECT (SELECT count(*) FROM kernel.entities) AS entities,

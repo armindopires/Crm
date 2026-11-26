@@ -95,12 +95,13 @@ def run_idempotent(conn: Conn, ctx: OpContext, request: Request, key: str | None
     """Mesma chave + mesmo pedido → mesma resposta, sem segundo efeito. Pedido diferente → 409."""
     if key is None:
         return fn()
+    actor = str(ctx.principal.actor_id)
     req_hash = sha256_hex(
-        canonical_json({"m": request.method, "p": request.url.path, "b": to_jsonable(body)})
+        canonical_json({"m": request.method, "p": request.url.path, "a": actor, "b": to_jsonable(body)})
     )
     prev = conn.execute("SELECT * FROM api.idempotency_keys WHERE idem_key = %s", (key,)).fetchone()
     if prev:
-        if prev["request_hash"] != req_hash:
+        if str(prev["actor_id"]) != actor or prev["request_hash"] != req_hash:
             raise Conflict("Idempotency-Key reutilizada com um pedido diferente.", code="WE-IDEM-409")
         request.state.idempotent_replay = True
         return prev["response_body"]
@@ -110,8 +111,17 @@ def run_idempotent(conn: Conn, ctx: OpContext, request: Request, key: str | None
         with conn.transaction():
             conn.execute(
                 "INSERT INTO api.idempotency_keys (tenant_id, idem_key, method, path, request_hash, status_code, "
-                "response_body) VALUES (%s,%s,%s,%s,%s,%s,%s)",
-                (ctx.tenant_id, key, request.method, request.url.path, req_hash, status_code, Jsonb(payload)),
+                "response_body, actor_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
+                (
+                    ctx.tenant_id,
+                    key,
+                    request.method,
+                    request.url.path,
+                    req_hash,
+                    status_code,
+                    Jsonb(payload),
+                    ctx.principal.actor_id,
+                ),
             )
     except pg_errors.UniqueViolation as exc:
         raise Conflict("Pedido concorrente com a mesma Idempotency-Key; repita o pedido.",

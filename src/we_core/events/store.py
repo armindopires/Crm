@@ -18,7 +18,7 @@ from uuid import UUID
 from we_core.common import GENESIS_HASH, chain_hash, iso_utc, to_jsonable, utcnow, uuid7
 from we_core.context import OpContext
 from we_core.db import Conn
-from we_core.errors import ConcurrencyConflict
+from we_core.errors import ConcurrencyConflict, ValidationFailed
 from we_core.events.registry import get_registry
 
 HASHED_FIELDS = (
@@ -60,6 +60,18 @@ def hash_record(row: dict[str, Any]) -> dict[str, Any]:
     return to_jsonable(rec)  # type: ignore[no-any-return]
 
 
+def _reject_floats(obj: Any, path: str) -> None:
+    """Floats não fazem round-trip exato em JSONB: valores numéricos não inteiros circulam como texto decimal."""
+    if isinstance(obj, float):
+        raise ValidationFailed(f"Float não permitido em {path}; use texto decimal.", code="WE-EVT-FLOAT")
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            _reject_floats(v, f"{path}.{k}")
+    elif isinstance(obj, list | tuple):
+        for i, v in enumerate(obj):
+            _reject_floats(v, f"{path}[{i}]")
+
+
 def subject_for(event: dict[str, Any]) -> str:
     return f"we.{event['tenant_id']}.{event['event_type']}"
 
@@ -89,6 +101,7 @@ def advance_chain(conn: Conn, tenant_id: UUID, chain: str, seq: int, h: str) -> 
 def append(conn: Conn, ctx: OpContext, draft: EventDraft) -> AppendResult:
     registry = get_registry()
     version = draft.schema_version or registry.latest_version(draft.event_type)
+    _reject_floats(draft.payload, "payload")
     payload = to_jsonable(draft.payload)
     registry.validate(draft.event_type, version, payload)
     tenant_id = ctx.tenant_id

@@ -12,7 +12,7 @@ from we_core.context import OpContext
 from we_core.db import Conn
 from we_core.errors import Conflict, NotFound, ValidationFailed
 from we_core.events.store import EventDraft, append
-from we_core.identity.authz import Resource, require
+from we_core.identity.authz import Resource, require, scope_sql
 
 
 def create_signal(
@@ -70,6 +70,12 @@ def promote(conn: Conn, ctx: OpContext, signal_id: UUID, *, title: str, value_es
     ).fetchone()
     if not sig:
         raise NotFound("Sinal não encontrado.")
+    require(
+        conn,
+        ctx.principal,
+        "opportunity:write",
+        Resource("signal", signal_id, organization_id=sig["organization_id"]),
+    )
     if sig["status"] == "promoted":
         raise Conflict("Sinal já promovido a oportunidade.", code="WE-INT-409")
     if (value_estimate is None) != (currency is None):
@@ -104,19 +110,17 @@ def promote(conn: Conn, ctx: OpContext, signal_id: UUID, *, title: str, value_es
 
 def list_signals(conn: Conn, ctx: OpContext, limit: int) -> list[dict[str, Any]]:
     require(conn, ctx.principal, "signal:read", Resource("signal"))
-    return [
-        dict(r)
-        for r in conn.execute(
-            "SELECT * FROM intelligence.signals ORDER BY created_at DESC LIMIT %s", (limit,)
-        ).fetchall()
-    ]
+    where, params = scope_sql(ctx.principal)
+    sql = f"SELECT * FROM intelligence.signals WHERE {where} ORDER BY created_at DESC LIMIT %s"
+    return [dict(r) for r in conn.execute(sql.encode(), (*params, limit)).fetchall()]
 
 
 def list_opportunities(conn: Conn, ctx: OpContext, limit: int) -> list[dict[str, Any]]:
     require(conn, ctx.principal, "opportunity:read", Resource("opportunity"))
-    return [
-        dict(r)
-        for r in conn.execute(
-            "SELECT * FROM intelligence.opportunities ORDER BY created_at DESC LIMIT %s", (limit,)
-        ).fetchall()
-    ]
+    where, params = scope_sql(ctx.principal, org_col="s.organization_id")
+    sql = (
+        "SELECT o.* FROM intelligence.opportunities o JOIN intelligence.signals s "
+        f"ON s.tenant_id = o.tenant_id AND s.signal_id = o.signal_id WHERE {where} "
+        "ORDER BY o.created_at DESC LIMIT %s"
+    )
+    return [dict(r) for r in conn.execute(sql.encode(), (*params, limit)).fetchall()]

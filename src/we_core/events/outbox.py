@@ -56,6 +56,11 @@ async def publish_batch(
                  ON e.tenant_id = o.tenant_id AND e.event_id = o.event_id
                WHERE o.status = 'pending' AND o.next_attempt_at <= now()
                  AND (%s::uuid IS NULL OR o.tenant_id = %s::uuid)
+                 AND NOT EXISTS (
+                   SELECT 1 FROM event_store.outbox o2 JOIN event_store.events e2
+                     ON e2.tenant_id = o2.tenant_id AND e2.event_id = o2.event_id
+                   WHERE o2.tenant_id = o.tenant_id AND o2.status = 'pending'
+                     AND o2.next_attempt_at > now() AND e2.chain_seq < e.chain_seq)
                ORDER BY e.tenant_id, e.chain_seq
                LIMIT %s FOR UPDATE OF o SKIP LOCKED""",
             (tenant_id, tenant_id, batch_size),

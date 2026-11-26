@@ -6,6 +6,8 @@ O domínio não depende de um fornecedor: `AIProvider` é uma porta. Nesta fase 
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import re
 from dataclasses import dataclass, field
 from typing import Any, Protocol
@@ -15,6 +17,7 @@ from psycopg.types.json import Jsonb
 
 from we_core.audit import log as audit
 from we_core.common import canonical_json, sha256_hex, uuid7
+from we_core.config import get_settings
 from we_core.context import OpContext
 from we_core.db import Conn
 from we_core.errors import Forbidden, ValidationFailed
@@ -87,7 +90,10 @@ def invoke(conn: Conn, ctx: OpContext, provider: AIProvider, *, capability: str,
     result = provider.run(capability, safe_text, params)
     tpl_id, tpl_ver = PROMPT_TEMPLATES[capability]
     trace_id = uuid7()
-    in_hash, out_hash = sha256_hex(text), sha256_hex(canonical_json(result.output))
+    # HMAC com chave secreta: impede força bruta de inputs curtos (ex.: NIF) a partir do hash publicado
+    key = (get_settings().audit_pseudonym_key.get_secret_value() or "dev-only-pseudonym-key").encode()
+    in_hash = hmac.new(key, text.encode(), hashlib.sha256).hexdigest()
+    out_hash = sha256_hex(canonical_json(result.output))
     conn.execute(
         """INSERT INTO ai.ai_traces (ai_trace_id, tenant_id, provider, model, capability, prompt_template_id,
              prompt_version, input_hash, output_hash, input_ref, output_summary, tools_called, parameters,

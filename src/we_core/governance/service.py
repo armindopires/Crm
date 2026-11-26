@@ -16,9 +16,11 @@ from we_core.db import Conn
 from we_core.errors import Conflict, Forbidden, HumanApprovalRequired, NotFound, ValidationFailed
 from we_core.events.store import EventDraft, append
 from we_core.evidence import service as evidence
-from we_core.identity.authz import Resource, require
+from we_core.identity.authz import Resource, require, scope_sql
 from we_core.kernel.service import get_context_frame
 
+# Eventos de decisão revelam existência e contexto de atos materiais: nunca abaixo de confidential.
+DECISION_EVENT_CLASSIFICATION = "confidential"
 IMPACT = {"juridico", "fiscal", "financeiro", "laboral", "reputacional", "externo", "interno"}
 
 
@@ -55,7 +57,7 @@ def propose(conn: Conn, ctx: OpContext, *, title: str, description: str | None, 
     for eid in evidence_ids:
         evidence.link(conn, ctx, eid, "decision", decision_id, "supports", as_reference=True)
     append(conn, ctx, EventDraft(
-        event_type="governance.decision_proposed", aggregate_type="decision", aggregate_id=decision_id,
+        event_type="governance.decision_proposed", classification=DECISION_EVENT_CLASSIFICATION, aggregate_type="decision", aggregate_id=decision_id,
         expected_version=0, organization_id=organization_id, context_frame_id=context_frame_id,
         idempotency_key=idempotency_key,
         payload={"decision_type": decision_type, "impact_category": impact_category,
@@ -98,14 +100,12 @@ def get(conn: Conn, ctx: OpContext, decision_id: UUID) -> dict[str, Any]:
 
 def list_decisions(conn: Conn, ctx: OpContext, status: str | None, limit: int) -> list[dict[str, Any]]:
     require(conn, ctx.principal, "decision:read", Resource("decision"))
+    where, params = scope_sql(ctx.principal)
     if status:
-        rows = conn.execute("SELECT * FROM governance.decisions WHERE status = %s ORDER BY created_at DESC LIMIT %s",
-                            (status, limit)).fetchall()  # fmt: skip
-    else:
-        rows = conn.execute(
-            "SELECT * FROM governance.decisions ORDER BY created_at DESC LIMIT %s", (limit,)
-        ).fetchall()
-    return [dict(r) for r in rows]
+        where += " AND status = %s"
+        params.append(status)
+    sql = f"SELECT * FROM governance.decisions WHERE {where} ORDER BY created_at DESC LIMIT %s"
+    return [dict(r) for r in conn.execute(sql.encode(), (*params, limit)).fetchall()]
 
 
 def review(conn: Conn, ctx: OpContext, decision_id: UUID, *, verdict: str, rationale: str,
@@ -144,7 +144,7 @@ def review(conn: Conn, ctx: OpContext, decision_id: UUID, *, verdict: str, ratio
     ).fetchone()
     assert updated is not None
     append(conn, ctx, EventDraft(
-        event_type=f"governance.decision_{verdict}", aggregate_type="decision", aggregate_id=decision_id,
+        event_type=f"governance.decision_{verdict}", classification=DECISION_EVENT_CLASSIFICATION, aggregate_type="decision", aggregate_id=decision_id,
         organization_id=row["organization_id"], context_frame_id=row["context_frame_id"],
         payload={"approval_id": approval_id, "from_status": row["status"]},
     ))  # fmt: skip
@@ -182,7 +182,7 @@ def execute(conn: Conn, ctx: OpContext, decision_id: UUID) -> dict[str, Any]:
     ).fetchone()
     assert updated is not None
     append(conn, ctx, EventDraft(
-        event_type="governance.decision_executed", aggregate_type="decision", aggregate_id=decision_id,
+        event_type="governance.decision_executed", classification=DECISION_EVENT_CLASSIFICATION, aggregate_type="decision", aggregate_id=decision_id,
         organization_id=row["organization_id"], context_frame_id=row["context_frame_id"],
         payload={"execution_mode": "recorded_only"},
     ))  # fmt: skip

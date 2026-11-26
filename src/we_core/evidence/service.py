@@ -172,7 +172,7 @@ def link(conn: Conn, ctx: OpContext, evidence_id: UUID, target_type: str, target
              Jsonb({"target_type": target_type, "target_id": str(target_id)})),
         )  # fmt: skip
         append(conn, ctx, EventDraft(
-            event_type="evidence.evidence_linked", aggregate_type="evidence", aggregate_id=evidence_id,
+            event_type="evidence.evidence_linked", classification=ev["classification"], aggregate_type="evidence", aggregate_id=evidence_id,
             payload={"target_type": target_type, "target_id": target_id, "link_type": link_type},
         ))  # fmt: skip
     return {
@@ -201,7 +201,7 @@ def verify(conn: Conn, ctx: OpContext, storage: ObjectStorage, evidence_id: UUID
          ctx.principal.actor_id, observed, Jsonb({"result": result})),
     )  # fmt: skip
     append(conn, ctx, EventDraft(
-        event_type="evidence.integrity_verified", aggregate_type="evidence", aggregate_id=evidence_id,
+        event_type="evidence.integrity_verified", classification=ev["classification"], aggregate_type="evidence", aggregate_id=evidence_id,
         payload={"sha256_expected": ev["sha256"], "sha256_observed": observed, "result": result},
     ))  # fmt: skip
     audit.record(

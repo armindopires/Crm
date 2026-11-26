@@ -197,15 +197,17 @@ def import_deposit(conn: Conn, ctx: OpContext, *, deposit_bytes: bytes, schema_b
 
 def search(conn: Conn, ctx: OpContext, query: str, limit: int = 5) -> list[dict[str, Any]]:
     require(conn, ctx.principal, "knowledge:read", Resource("knowledge"))
-    return [
-        dict(r)
-        for r in conn.execute(
-            "SELECT n.node_id, n.title, n.provenance, c.embedding <=> %s::vector AS distance FROM knowledge.chunks c "
-            "JOIN knowledge.nodes n ON n.tenant_id = c.tenant_id AND n.node_id = c.node_id "
-            "ORDER BY c.embedding <=> %s::vector LIMIT %s",
-            (str(embed(query)), str(embed(query)), limit),
-        ).fetchall()
-    ]
+    from we_core.identity.authz import scope_sql
+
+    where, params = scope_sql(ctx.principal, org_col=None, classification=True)
+    vec = str(embed(query))
+    sql = (
+        "SELECT n.node_id, n.title, n.provenance, c.embedding <=> %s::vector AS distance FROM knowledge.chunks c "
+        "JOIN knowledge.nodes n ON n.tenant_id = c.tenant_id AND n.node_id = c.node_id "
+        f"WHERE {where.replace('classification', 'n.classification')} "
+        "ORDER BY c.embedding <=> %s::vector LIMIT %s"
+    )
+    return [dict(r) for r in conn.execute(sql.encode(), (vec, *params, vec, limit)).fetchall()]
 
 
 def import_deposit_cli(settings: Settings, tenant_id: UUID, actor_subject: str, deposit: Path,

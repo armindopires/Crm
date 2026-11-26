@@ -71,9 +71,10 @@ def _rebuild(conn: Conn, tenant_id: UUID) -> int:
     conn.execute("DELETE FROM projection.checkpoints WHERE tenant_id = %s AND projection_name = %s",
                  (tenant_id, PROJECTION))  # fmt: skip
     count = 0
-    with conn.cursor() as cur:
+    with conn.cursor(name="projection_replay") as cur:
+        cur.itersize = 1000
         cur.execute("SELECT * FROM event_store.events WHERE tenant_id = %s ORDER BY chain_seq", (tenant_id,))
-        for ev in cur.fetchall():
+        for ev in cur:
             apply(conn, ev)
             count += 1
     return count

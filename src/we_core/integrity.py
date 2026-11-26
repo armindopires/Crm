@@ -28,10 +28,20 @@ class ChainReport:
 
 
 def _verify(conn: Conn, tenant_id: UUID, chain: str, sql: str, hasher: Any, hash_col: str) -> ChainReport:
+    """Lê primeiro a cabeça e só depois percorre até ela (sem falsos alarmes com escritas concorrentes).
+
+    Usa cursor de servidor (sem carregar a cadeia inteira em memória).
+    """
     report = ChainReport(chain=chain, tenant_id=str(tenant_id))
+    head = conn.execute(
+        "SELECT last_seq, last_hash FROM platform.chain_heads WHERE tenant_id = %s AND chain_name = %s",
+        (tenant_id, chain),
+    ).fetchone()
+    limit_seq = int(head["last_seq"]) if head else 0
     expected_prev, expected_seq = GENESIS_HASH, 1
-    with conn.cursor() as cur:
-        cur.execute(sql, (tenant_id,))
+    with conn.cursor(name=f"verify_{chain}") as cur:
+        cur.itersize = 1000
+        cur.execute(sql, (tenant_id, limit_seq))
         for row in cur:
             report.records += 1
             seq = int(row["chain_seq"])
@@ -43,13 +53,9 @@ def _verify(conn: Conn, tenant_id: UUID, chain: str, sql: str, hasher: Any, hash
             if recomputed != row[hash_col]:
                 report.fail(seq, "content", "conteúdo alterado: hash recalculado difere do gravado")
             expected_prev, expected_seq = row[hash_col], seq + 1
-    head = conn.execute(
-        "SELECT last_seq, last_hash FROM platform.chain_heads WHERE tenant_id = %s AND chain_name = %s",
-        (tenant_id, chain),
-    ).fetchone()
     if head:
-        report.head_seq = int(head["last_seq"])
-        if int(head["last_seq"]) != expected_seq - 1 or head["last_hash"] != expected_prev:
+        report.head_seq = limit_seq
+        if limit_seq != expected_seq - 1 or head["last_hash"] != expected_prev:
             report.fail(None, "head", "cabeça da cadeia não corresponde ao último registo (truncagem?)")
     elif report.records:
         report.fail(None, "head", "cabeça da cadeia em falta")
@@ -59,7 +65,7 @@ def _verify(conn: Conn, tenant_id: UUID, chain: str, sql: str, hasher: Any, hash
 def verify_events(conn: Conn, tenant_id: UUID) -> ChainReport:
     return _verify(
         conn, tenant_id, "events",
-        "SELECT * FROM event_store.events WHERE tenant_id = %s ORDER BY chain_seq",
+        "SELECT * FROM event_store.events WHERE tenant_id = %s AND chain_seq <= %s ORDER BY chain_seq",
         hash_record, "event_hash",
     )  # fmt: skip
 
@@ -67,6 +73,6 @@ def verify_events(conn: Conn, tenant_id: UUID) -> ChainReport:
 def verify_audit(conn: Conn, tenant_id: UUID) -> ChainReport:
     return _verify(
         conn, tenant_id, "audit",
-        "SELECT * FROM audit.audit_log WHERE tenant_id = %s ORDER BY chain_seq",
+        "SELECT * FROM audit.audit_log WHERE tenant_id = %s AND chain_seq <= %s ORDER BY chain_seq",
         audit_hash_record, "record_hash",
     )  # fmt: skip

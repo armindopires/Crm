@@ -9,6 +9,7 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 from fastapi import FastAPI, Request, Response
+from fastapi.concurrency import run_in_threadpool
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
@@ -141,7 +142,7 @@ def create_app(settings: Settings | None = None, storage: ObjectStorage | None =
     async def we_error(request: Request, exc: WEError) -> JSONResponse:
         if exc.status == 403 or exc.code.startswith("WE-GOV-"):
             metrics.policy_denials.labels(exc.code).inc()
-            _audit_denial(request, exc)
+            await run_in_threadpool(_audit_denial, request, exc)
         extra = {
             k: v for k, v in exc.extra.items() if k in ("current_version", "policy_refs", "status", "action")
         }
